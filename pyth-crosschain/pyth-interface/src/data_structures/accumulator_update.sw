@@ -38,7 +38,11 @@ impl AccumulatorUpdate {
         require(trailing_header_size.is_some(), PythError::InvalidHeaderSize);
         // skip trailing headers and update type
         let offset = 8 + trailing_header_size.unwrap().as_u64();
-        require(self.data.len()  >= offset, PythError::InvalidUpdateDataLength);
+        require(
+            self.data
+                .len() >= offset,
+            PythError::InvalidUpdateDataLength,
+        );
         offset
     }
 }
@@ -52,7 +56,7 @@ impl AccumulatorUpdate {
 ) -> (u64, Bytes, u64, Bytes) {
         let encoded_offset = self.verify();
         let (_, slice) = self.data.split_at(encoded_offset);
-        let (encoded_slice, _) = slice.split_at(self.data.len()  - encoded_offset);
+        let (encoded_slice, _) = slice.split_at(self.data.len() - encoded_offset);
         let mut offset = 0;
         let wormhole_proof_size = u16::from_be_bytes([encoded_slice.get(offset).unwrap(), encoded_slice.get(offset + 1).unwrap()]).as_u64();
         offset += 2;

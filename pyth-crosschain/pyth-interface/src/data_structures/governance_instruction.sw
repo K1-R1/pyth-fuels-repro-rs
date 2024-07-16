@@ -1,7 +1,15 @@
 library;
 
 use ::errors::PythError;
-use ::data_structures::{data_source::*, governance_payload::*, price::*, wormhole_light::{StorageGuardianSet, WormholeVM}};
+use ::data_structures::{
+    data_source::*,
+    governance_payload::*,
+    price::*,
+    wormhole_light::{
+        StorageGuardianSet,
+        WormholeVM,
+    },
+};
 use std::{bytes::Bytes, hash::Hash};
 use std::math::*;
 use std::primitive_conversions::{u32::*, u64::*};
@@ -35,13 +43,20 @@ pub enum GovernanceAction {
 }
 
 impl GovernanceInstruction {
-    pub fn new(magic: u32,
-                module: GovernanceModule,
-                action: GovernanceAction,
-                target_chain_id: u16,
-                payload: Bytes
-                ) -> Self {
-        Self { magic, module, action, target_chain_id, payload }
+    pub fn new(
+        magic: u32,
+        module: GovernanceModule,
+        action: GovernanceAction,
+        target_chain_id: u16,
+        payload: Bytes,
+    ) -> Self {
+        Self {
+            magic,
+            module,
+            action,
+            target_chain_id,
+            payload,
+        }
     }
 
     pub fn parse_governance_instruction(encoded_instruction: Bytes) -> Self {
@@ -63,10 +78,13 @@ impl GovernanceInstruction {
             3 => GovernanceModule::StacksTarget,
             _ => GovernanceModule::Invalid,
         };
-        require(match module {
-            GovernanceModule::Target => true,
-            _ => false,
-        }, PythError::InvalidGovernanceTarget);
+        require(
+            match module {
+                GovernanceModule::Target => true,
+                _ => false,
+            },
+            PythError::InvalidGovernanceTarget,
+        );
         index += 1;
 
         let action_number = encoded_instruction.get(index).unwrap();
@@ -79,10 +97,13 @@ impl GovernanceInstruction {
             5 => GovernanceAction::RequestGovernanceDataSourceTransfer,
             _ => GovernanceAction::Invalid,
         };
-        require(match governance_action {
-            GovernanceAction::Invalid => false,
-            _ => true,
-        }, PythError::InvalidGovernanceAction);
+        require(
+            match governance_action {
+                GovernanceAction::Invalid => false,
+                _ => true,
+            },
+            PythError::InvalidGovernanceAction,
+        );
         index += 1;
 
         let target_chain_id = u16::from_be_bytes([
@@ -93,23 +114,21 @@ impl GovernanceInstruction {
 
         let (_, payload) = encoded_instruction.split_at(index);
 
-        GovernanceInstruction::new(
-            magic,
-            module,
-            governance_action,
-            target_chain_id,
-            payload,
-        )
+        GovernanceInstruction::new(magic, module, governance_action, target_chain_id, payload)
     }
 
     /// Parse an AuthorizeGovernanceDataSourceTransferPayload (action 2) with minimal validation
-    pub fn parse_authorize_governance_data_source_transfer_payload(encoded_payload: Bytes) -> AuthorizeGovernanceDataSourceTransferPayload {
+    pub fn parse_authorize_governance_data_source_transfer_payload(
+        encoded_payload: Bytes,
+    ) -> AuthorizeGovernanceDataSourceTransferPayload {
         AuthorizeGovernanceDataSourceTransferPayload {
             claim_vaa: encoded_payload,
         }
     }
 
-    pub fn parse_request_governance_data_source_transfer_payload(encoded_payload: Bytes) -> RequestGovernanceDataSourceTransferPayload {
+    pub fn parse_request_governance_data_source_transfer_payload(
+        encoded_payload: Bytes,
+    ) -> RequestGovernanceDataSourceTransferPayload {
         let mut index = 0;
         let governance_data_source_index = u32::from_be_bytes([
             encoded_payload.get(index).unwrap(),
@@ -118,7 +137,11 @@ impl GovernanceInstruction {
             encoded_payload.get(index + 3).unwrap(),
         ]);
         index += 4;
-        require(index == encoded_payload.len(), PythError::InvalidGovernanceMessage);
+        require(
+            index == encoded_payload
+                .len(),
+            PythError::InvalidGovernanceMessage,
+        );
         let rdgst = RequestGovernanceDataSourceTransferPayload {
             governance_data_source_index,
         };
@@ -149,7 +172,11 @@ impl GovernanceInstruction {
             i += 1
         }
 
-        require(index == encoded_payload.len(), PythError::InvalidGovernanceMessage);
+        require(
+            index == encoded_payload
+                .len(),
+            PythError::InvalidGovernanceMessage,
+        );
         let sds = SetDataSourcesPayload { data_sources };
         sds
     }
@@ -178,7 +205,11 @@ impl GovernanceInstruction {
             encoded_payload.get(index + 7).unwrap(),
         ]);
         index += 8;
-        require(encoded_payload.len() == index, PythError::InvalidGovernanceMessage);
+        require(
+            encoded_payload
+                .len() == index,
+            PythError::InvalidGovernanceMessage,
+        );
         let sf = SetFeePayload {
             new_fee: val * 10u64.pow(expo.try_as_u32().unwrap()),
         };
@@ -198,7 +229,11 @@ impl GovernanceInstruction {
             encoded_payload.get(index + 7).unwrap(),
         ]);
         index += 8;
-        require(index == encoded_payload.len(), PythError::InvalidGovernanceMessage);
+        require(
+            index == encoded_payload
+                .len(),
+            PythError::InvalidGovernanceMessage,
+        );
         let svp = SetValidPeriodPayload {
             new_valid_period: valid_time_period_seconds,
         };

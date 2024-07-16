@@ -9,12 +9,12 @@ pub mod data_structures;
 
 use ::data_structures::{
     data_source::DataSource,
+    governance_payload::UpgradeContractPayload,
     price::{
         Price,
         PriceFeed,
         PriceFeedId,
     },
-    governance_payload::UpgradeContractPayload,
     wormhole_light::{
         GuardianSet,
     },

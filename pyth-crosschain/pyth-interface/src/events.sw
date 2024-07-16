@@ -1,9 +1,6 @@
 library;
 
-use ::data_structures::{
-    data_source::DataSource,
-    price::PriceFeedId,
-};
+use ::data_structures::{data_source::DataSource, price::PriceFeedId,};
 
 pub struct ConstructedEvent {
     pub guardian_set_index: u32,

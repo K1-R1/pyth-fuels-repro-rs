@@ -1,5 +1,9 @@
 [[package]]
-name = "contract"
+name = "core"
+source = "path+from-root-E19CE48B3E858B72"
+
+[[package]]
+name = "demo-contract"
 source = "member"
 dependencies = [
     "pyth_interface",
@@ -7,12 +11,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "core"
-source = "path+from-root-E19CE48B3E858B72"
-
-[[package]]
 name = "pyth_interface"
-source = "path+from-root-67606CE75F849616"
+source = "path+from-root-DD955291108CE95A"
 dependencies = [
     "standards",
     "std",

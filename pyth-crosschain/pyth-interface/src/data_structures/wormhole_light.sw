@@ -108,7 +108,11 @@ impl GuardianSetUpgrade {
         index += 1;
         let mut new_guardian_set: StorageGuardianSet = StorageGuardianSet::new(
             0,
-            StorageKey::<StorageVec<b256>>::new(ZERO_B256, 0, sha256(("guardian_set_keys", new_guardian_set_index))),
+            StorageKey::<StorageVec<b256>>::new(
+                ZERO_B256,
+                0,
+                sha256(("guardian_set_keys", new_guardian_set_index)),
+            ),
         );
         let mut i: u8 = 0;
         while i < guardian_length {
@@ -122,12 +126,13 @@ impl GuardianSetUpgrade {
         require(
             new_guardian_set
                 .keys
-                .len() == guardian_length.as_u64(),
+                .len() == guardian_length
+                .as_u64(),
             WormholeError::GuardianSetKeysLengthNotEqual,
         );
         require(
             encoded_upgrade
-                .len()  == index,
+                .len() == index,
             WormholeError::InvalidGuardianSetUpgradeLength,
         );
         GuardianSetUpgrade::new(
@@ -218,7 +223,8 @@ impl GuardianSignature {
         require(
             recovered_signer
                 .is_ok() && recovered_signer
-                .unwrap().bits() == guardian_set_key,
+                .unwrap()
+                .bits() == guardian_set_key,
             WormholeError::SignatureInvalid,
         );
     }
@@ -430,7 +436,11 @@ impl WormholeVM {
             WormholeError::ConsistencyLevelIrretrievable,
         );
         index += 1;
-        require(index <= encoded_vm.len(), WormholeError::InvalidPayloadLength);
+        require(
+            index <= encoded_vm
+                .len(),
+            WormholeError::InvalidPayloadLength,
+        );
         let (_, payload) = encoded_vm.split_at(index);
         WormholeVM::new(
             version
@@ -533,7 +543,11 @@ impl WormholeVM {
             WormholeError::ConsistencyLevelIrretrievable,
         );
         index += 1;
-        require(index <= encoded_vm.len(), WormholeError::InvalidPayloadLength);
+        require(
+            index <= encoded_vm
+                .len(),
+            WormholeError::InvalidPayloadLength,
+        );
         let (_, payload) = encoded_vm.split_at(index);
         WormholeVM::new(
             version
